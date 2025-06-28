@@ -1,0 +1,33 @@
+     1                                  section .text
+     2                                  global sum
+     3                                  extern count, array, printf
+     4                                  
+     5                                  sum:
+     6 00000000 660FEFC0                    pxor xmm0, xmm0          ; Clear sum register
+     7 00000004 488B0C25[00000000]          mov rcx, [count]         ; Load count
+     8 0000000C 4885C9                      test rcx, rcx            ; Check if count is zero
+     9 0000000F 7434                        jz .done
+    10                                  
+    11 00000011 48BE-                       mov rsi, array           ; Load array address
+    11 00000013 [0000000000000000] 
+    12                                  .loop:
+    13 0000001B F20F100E                    movsd xmm1, [rsi]        ; Load element
+    14 0000001F F20F58C1                    addsd xmm0, xmm1         ; Add to sum
+    15                                  
+    16                                      ; Debug: Print current element being summed
+    17 00000023 4883EC08                    sub rsp, 8               ; Align stack
+    18 00000027 48BF-                       mov rdi, debug_element_fmt
+    18 00000029 [0000000000000000] 
+    19 00000031 B801000000                  mov rax, 1
+    20 00000036 E8(00000000)                call printf
+    21 0000003B 4883C408                    add rsp, 8
+    22                                  
+    23 0000003F 4883C608                    add rsi, 8               ; Move to next element
+    24 00000043 E2D6                        loop .loop
+    25                                  
+    26                                  .done:
+    27 00000045 C3                          ret
+    28                                  
+    29                                  section .data
+    30 00000000 53756D6D696E673A20-     debug_element_fmt db "Summing: %f", 10, 0
+    30 00000009 25660A00           

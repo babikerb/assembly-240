@@ -1,0 +1,72 @@
+     1                                  section .data
+     2 00000000 546869732070726F67-         welcome_msg db "This program will manage your arrays of 64-bit floats", 10, 0
+     2 00000009 72616D2077696C6C20-
+     2 00000012 6D616E61676520796F-
+     2 0000001B 757220617272617973-
+     2 00000024 206F662036342D6269-
+     2 0000002D 7420666C6F6174730A-
+     2 00000036 00                 
+     3 00000037 466F72207468652061-         input_instr db "For the array, enter a sequence of 64-bit floats separated by white space.", 10, 0
+     3 00000040 727261792C20656E74-
+     3 00000049 657220612073657175-
+     3 00000052 656E6365206F662036-
+     3 0000005B 342D62697420666C6F-
+     3 00000064 617473207365706172-
+     3 0000006D 617465642062792077-
+     3 00000076 686974652073706163-
+     3 0000007F 652E0A00           
+     4 00000083 416674657220746865-         end_instr db "After the last input, press enter followed by Control+D.", 10, 0
+     4 0000008C 206C61737420696E70-
+     4 00000095 75742C207072657373-
+     4 0000009E 20656E74657220666F-
+     4 000000A7 6C6C6F776564206279-
+     4 000000B0 20436F6E74726F6C2B-
+     4 000000B9 442E0A00           
+     5 000000BD 257300                      fmt db "%s", 0  ; Format string for printf
+     6                                  
+     7                                  section .bss
+     8                                      extern array, count  
+     9                                  
+    10                                  section .text
+    11                                  global manager
+    12                                  extern printf, input_array, sum, output_array, sort, swap
+    13                                  
+    14                                  manager:
+    15 00000000 55                          push    rbp
+    16 00000001 4889E5                      mov     rbp, rsp
+    17                                  
+    18                                      ; Print welcome message
+    19 00000004 B800000000                  mov     rax, 0
+    20 00000009 48BF-                       mov     rdi, welcome_msg
+    20 0000000B [0000000000000000] 
+    21 00000013 E8(00000000)                call    printf
+    22                                  
+    23                                      ; Print input instructions
+    24 00000018 B800000000                  mov     rax, 0
+    25 0000001D 48BF-                       mov     rdi, input_instr
+    25 0000001F [3700000000000000] 
+    26 00000027 E8(00000000)                call    printf
+    27                                  
+    28                                      ; Print end instructions
+    29 0000002C B800000000                  mov     rax, 0
+    30 00000031 48BF-                       mov     rdi, end_instr
+    30 00000033 [8300000000000000] 
+    31 0000003B E8(00000000)                call    printf
+    32                                  
+    33                                      ; Call input_array to take user input
+    34 00000040 E8(00000000)                call    input_array
+    35                                  
+    36                                      ; Call sum to calculate sum of the array
+    37 00000045 E8(00000000)                call    sum
+    38                                  
+    39                                      ; Call sort to sort the array
+    40 0000004A E8(00000000)                call    sort
+    41                                  
+    42                                      ; Call swap (if needed for additional operations)
+    43 0000004F E8(00000000)                call    swap
+    44                                  
+    45                                      ; Call output_array to display the results
+    46 00000054 E8(00000000)                call    output_array
+    47                                  
+    48 00000059 5D                          pop     rbp
+    49 0000005A C3                          ret

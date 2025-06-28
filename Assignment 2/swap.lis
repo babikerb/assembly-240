@@ -1,0 +1,9 @@
+     1                                  section .text
+     2                                  global swap
+     3                                  
+     4                                  swap:
+     5 00000000 F30F7E07                    movq xmm0, [rdi]
+     6 00000004 F30F7E0E                    movq xmm1, [rsi]
+     7 00000008 660FD60F                    movq [rdi], xmm1
+     8 0000000C 660FD606                    movq [rsi], xmm0
+     9 00000010 C3                          ret

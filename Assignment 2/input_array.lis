@@ -1,0 +1,85 @@
+     1                                  global array, count
+     2                                  global input_array
+     3                                  
+     4                                  section .bss
+     5 00000000 <res 320h>                  array resq 100             ; Reserve space for 100 floating-point numbers (8 bytes each)
+     6 00000320 ????????????????            count resq 1               ; Variable to track the number of elements input
+     7                                  
+     8                                  section .data
+     9 00000000 456E74657220612073-         prompt db "Enter a sequence of 64-bit floats separated by white space:", 0
+     9 00000009 657175656E6365206F-
+     9 00000012 662036342D62697420-
+     9 0000001B 666C6F617473207365-
+     9 00000024 706172617465642062-
+     9 0000002D 792077686974652073-
+     9 00000036 706163653A00       
+    10                                      prompt_len equ $ - prompt
+    11 0000003C 496E76616C69642069-         error_message db "Invalid input. Try again.", 10, 0
+    11 00000045 6E7075742E20547279-
+    11 0000004E 20616761696E2E0A00 
+    12                                      error_len equ $ - error_message
+    13                                  
+    14                                  section .text
+    15                                  
+    16                                  _start:
+    17                                      ; Print the prompt
+    18 00000000 B801000000                  mov rax, 1                ; sys_write
+    19 00000005 BF01000000                  mov rdi, 1                ; file descriptor (stdout)
+    20 0000000A 48BE-                       mov rsi, prompt           ; message
+    20 0000000C [0000000000000000] 
+    21 00000014 BA3C000000                  mov rdx, prompt_len       ; length of the message
+    22 00000019 0F05                        syscall
+    23                                  
+    24                                      ; Initialize count to 0
+    25 0000001B B800000000                  mov rax, 0
+    26 00000020 48890425[20030000]          mov [count], rax
+    27                                  
+    28                                      ; Initialize the array with 0s
+    29 00000028 4831C0                      xor rax, rax              ; Set rax to 0
+    30 0000002B B964000000                  mov rcx, 100              ; Array size
+    31                                  .init_array:
+    32 00000030 488904CD[00000000]          mov [array + rcx * 8], rax ; Set array element to 0
+    33 00000038 48FFC9                      dec rcx
+    34 0000003B 75F3                        jnz .init_array
+    35                                  
+    36                                  read_input:
+    37                                      ; Read the user input into a buffer (we'll assume it's valid float values)
+    38 0000003D B800000000                  mov rax, 0                ; sys_read
+    39 00000042 BF00000000                  mov rdi, 0                ; file descriptor (stdin)
+    40 00000047 48BE-                       mov rsi, array            ; input buffer (reuse the array for input)
+    40 00000049 [0000000000000000] 
+    41 00000051 BA00020000                  mov rdx, 512              ; size of buffer
+    42 00000056 0F05                        syscall
+    43                                  
+    44                                      ; Check if the user input is valid (we assume it's a number for simplicity)
+    45                                      ; We will just read the input as integers for simplicity, modify for floating-point handling
+    46                                      ; Here you can modify this to read and convert a floating point value if needed
+    47                                      ; For simplicity, we assume a valid input of integers for this example
+    48                                  
+    49                                      ; After valid input, increment count
+    50 00000058 488B0425[20030000]          mov rax, [count]
+    51 00000060 48FFC0                      inc rax
+    52 00000063 48890425[20030000]          mov [count], rax
+    53                                  
+    54                                      ; Check if count exceeds the array bounds
+    55 0000006B 488B0C25[20030000]          mov rcx, [count]
+    56 00000073 4883F964                    cmp rcx, 100              ; Array size check
+    57 00000077 7D16                        jge .done                 ; If count >= 100, jump to done
+    58                                  
+    59                                      ; Print current count and stored value
+    60 00000079 B801000000                  mov rax, 1                ; sys_write
+    61 0000007E BF01000000                  mov rdi, 1                ; file descriptor (stdout)
+    62 00000083 48BE-                       mov rsi, array            ; message buffer (reuse array)
+    62 00000085 [0000000000000000] 
+    63                                      ; Here, you would print the array's stored value, using an appropriate float-to-string function
+    64                                  
+    65                                      ; Loop back to read another input
+    66 0000008D EBAE                        jmp read_input
+    67                                  
+    68                                  .done:
+    69                                      ; Finished processing input, print the sum or other logic as needed
+    70                                  
+    71                                      ; Exit program cleanly
+    72 0000008F B83C000000                  mov rax, 60               ; sys_exit
+    73 00000094 4831FF                      xor rdi, rdi              ; exit status 0
+    74 00000097 0F05                        syscall

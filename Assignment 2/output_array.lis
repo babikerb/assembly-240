@@ -1,0 +1,23 @@
+     1                                  section .data
+     2 00000000 256C665C6E00            fmt_float db "%lf\n", 0  ; Added newline for better output formatting
+     3                                  
+     4                                  section .text
+     5                                  global output_array
+     6                                  extern printf, array, count
+     7                                  
+     8                                  output_array:
+     9 00000000 488B0C25[00000000]          mov rcx, qword [count]   ; FIX: Ensure count is read properly
+    10 00000008 4885C9                      test rcx, rcx
+    11 0000000B 7423                        jz .done                 ; If count is 0, exit
+    12                                  
+    13 0000000D 48BE-                       mov rsi, array
+    13 0000000F [0000000000000000] 
+    14                                  .loop:
+    15 00000017 F30F7E06                    movq xmm0, [rsi]         ; Load float from array
+    16 0000001B 48BF-                       mov rdi, fmt_float
+    16 0000001D [0000000000000000] 
+    17 00000025 E8(00000000)                call printf
+    18 0000002A 4883C608                    add rsi, 8
+    19 0000002E E2E7                        loop .loop
+    20                                  .done:
+    21 00000030 C3                          ret
